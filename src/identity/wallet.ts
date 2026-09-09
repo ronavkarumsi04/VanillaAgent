@@ -238,3 +238,23 @@ export function getAccountFromWallet(wallet: WalletData): PrivateKeyAccount {
   }
   return privateKeyToAccount(wallet.privateKey as `0x${string}`);
 }
+
+/**
+ * Get a ChainIdentity (supporting both EVM and Solana) from loaded WalletData.
+ */
+export function getIdentityFromWallet(wallet: WalletData): ChainIdentity {
+  const chainType = wallet.chainType || "evm";
+  if (chainType === "solana") {
+    if (!wallet.secretKey) {
+      throw new Error("Solana wallet missing secretKey");
+    }
+    const secretKey = bs58.decode(wallet.secretKey);
+    return new SolanaChainIdentity(secretKey);
+  }
+  if (!wallet.privateKey) {
+    throw new Error("EVM wallet missing privateKey");
+  }
+  const account = privateKeyToAccount(wallet.privateKey as `0x${string}`);
+  return new EvmChainIdentity(account);
+}
+

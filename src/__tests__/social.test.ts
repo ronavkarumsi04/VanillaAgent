@@ -957,3 +957,99 @@ describe("Address Validation", () => {
     expect(isValidAddress("70997970C51812dc3A010C7d01b50e0d17dc79C8")).toBe(false);
   });
 });
+
+// ─── 12. Multi-Chain Social Signing & Identity Integration Tests ─
+
+describe("Multi-Chain Identity & Social Signing", () => {
+  it("getIdentityFromWallet creates EvmChainIdentity for EVM wallet data", async () => {
+    const { getIdentityFromWallet } = await import("../identity/wallet.js");
+    const walletData = {
+      chainType: "evm" as const,
+      privateKey: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" as `0x${string}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    const identity = getIdentityFromWallet(walletData);
+    expect(identity.chainType).toBe("evm");
+    expect(identity.address.toLowerCase()).toBe("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266");
+  });
+
+  it("getIdentityFromWallet creates SolanaChainIdentity for Solana wallet data", async () => {
+    const { getIdentityFromWallet, generateSolanaKeypair } = await import("../identity/wallet.js");
+    const bs58 = (await import("bs58")).default;
+
+    const { secretKey, address } = generateSolanaKeypair();
+    const walletData = {
+      chainType: "solana" as const,
+      secretKey: bs58.encode(secretKey),
+      createdAt: new Date().toISOString(),
+    };
+
+    const identity = getIdentityFromWallet(walletData);
+    expect(identity.chainType).toBe("solana");
+    expect(identity.address).toBe(address);
+  });
+
+  it("signSendPayload with SolanaChainIdentity produces valid canonical SignedMessagePayload", async () => {
+    const { getIdentityFromWallet, generateSolanaKeypair } = await import("../identity/wallet.js");
+    const { signSendPayload } = await import("../social/signing.js");
+    const { verifyMessageSignature } = await import("../social/protocol.js");
+    const bs58 = (await import("bs58")).default;
+
+    const { secretKey, address: solanaSender } = generateSolanaKeypair();
+    const walletData = {
+      chainType: "solana" as const,
+      secretKey: bs58.encode(secretKey),
+      createdAt: new Date().toISOString(),
+    };
+
+    const identity = getIdentityFromWallet(walletData);
+    const recipient = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+    const content = "Hello from Solana autonomous agent!";
+
+    const payload = await signSendPayload(identity, recipient, content, "reply-msg-01");
+
+    expect(payload.from).toBe(solanaSender);
+    expect(payload.to).toBe("0x70997970c51812dc3a010c7d01b50e0d17dc79c8");
+    expect(payload.content).toBe(content);
+    expect(payload.signed_at).toBeTruthy();
+    expect(payload.reply_to).toBe("reply-msg-01");
+    expect(payload.signature).toBeTruthy();
+
+    // Verify signature with verifyMessageSignature
+    const isValid = await verifyMessageSignature(payload, solanaSender);
+    expect(isValid).toBe(true);
+  });
+
+  it("verifyMessageSignature correctly verifies both EVM and Solana senders", async () => {
+    const { getIdentityFromWallet, generateSolanaKeypair } = await import("../identity/wallet.js");
+    const { signSendPayload } = await import("../social/signing.js");
+    const { verifyMessageSignature } = await import("../social/protocol.js");
+    const bs58 = (await import("bs58")).default;
+
+    // 1. EVM Sender
+    const evmWallet = {
+      chainType: "evm" as const,
+      privateKey: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" as `0x${string}`,
+      createdAt: new Date().toISOString(),
+    };
+    const evmIdentity = getIdentityFromWallet(evmWallet);
+    const evmPayload = await signSendPayload(evmIdentity, "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "EVM test");
+    expect(await verifyMessageSignature(evmPayload, evmIdentity.address)).toBe(true);
+
+    // 2. Solana Sender
+    const { secretKey, address: solAddress } = generateSolanaKeypair();
+    const solWallet = {
+      chainType: "solana" as const,
+      secretKey: bs58.encode(secretKey),
+      createdAt: new Date().toISOString(),
+    };
+    const solIdentity = getIdentityFromWallet(solWallet);
+    const solPayload = await signSendPayload(solIdentity, "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "Solana test");
+    expect(await verifyMessageSignature(solPayload, solAddress)).toBe(true);
+
+    // 3. Tampered payload fails verification
+    const tamperedPayload = { ...solPayload, content: "Tampered content" };
+    expect(await verifyMessageSignature(tamperedPayload, solAddress)).toBe(false);
+  });
+});

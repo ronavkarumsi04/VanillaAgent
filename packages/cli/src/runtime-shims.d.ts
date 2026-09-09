@@ -29,6 +29,51 @@ declare module "@vanilla-agent/core/identity/wallet.js" {
   export function getWalletPath(dir?: string): string;
   export function loadSovereignWallet(dir?: string): any;
   export function getAccountFromWallet(wallet: any): any;
+  export function getIdentityFromWallet(wallet: any): any;
+}
+
+declare module "@vanilla-agent/core/identity/chain.js" {
+  export type ChainType = "evm" | "solana";
+  export interface ChainIdentity {
+    readonly chainType: ChainType;
+    readonly address: string;
+    signMessage(message: string): Promise<string>;
+  }
+  export function detectChainType(address: string): ChainType | null;
+  export function isValidAddress(address: string, chainType?: ChainType): boolean;
+  export function isValidEvmAddress(address: string): boolean;
+  export function isValidSolanaAddress(address: string): boolean;
+  export function normalizeAddress(address: string, chain: ChainType): string;
+}
+
+declare module "@vanilla-agent/core/social/signing.js" {
+  export interface SignedMessagePayload {
+    from: string;
+    to: string;
+    content: string;
+    signed_at: string;
+    signature: string;
+    reply_to?: string;
+  }
+  export function signSendPayload(
+    signer: any,
+    to: string,
+    content: string,
+    replyTo?: string,
+  ): Promise<SignedMessagePayload>;
+  export function signPollPayload(
+    signer: any,
+  ): Promise<{ address: string; signature: string; timestamp: string }>;
+}
+
+declare module "@vanilla-agent/core/social/validation.js" {
+  export function validateMessage(message: {
+    from?: string;
+    to?: string;
+    content?: string;
+    signed_at?: string;
+  }): { valid: boolean; errors: string[] };
+  export function validateRelayUrl(url: string): void;
 }
 
 declare module "@vanilla-agent/core/state/database.js" {
