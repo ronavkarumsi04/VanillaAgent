@@ -18,60 +18,221 @@ VanillaAgent is an autonomous agent runtime designed for genuine sovereignty. An
 
 ---
 
-## Key Capabilities
+# 🎮 Super Easy Setup Guide (5th Grader Friendly!)
 
-- **Interactive Web GUI Control Panel:** Visual dark-mode dashboard on `http://localhost:3000` with live cognitive thought stream, direct mission control chat, interactive 5-tier memory visualizer, swarm DAG task graph, and treasury management.
-- **Cross-Platform Native Releases:** Pre-packaged releases with dedicated launchers for **macOS Apple Silicon (M1/M2/M3/M4)**, **macOS Intel (x64)**, **Windows (64-bit)**, and **Linux (x64 & ARM64)**.
-- **Universal Inference Support:** Seamless first-class support for Anthropic Claude (3.7 Sonnet, 3.5 Haiku), OpenAI (GPT-4o, o3-mini), Google Gemini (2.0 Flash), Grok (xAI), DeepSeek (V3/R1), Ollama (Local), OpenRouter, and Conway Cloud with automatic fallback and routing.
-- **Sovereign Crypto Identity & Economics:** Native sovereign wallet generation (Ethereum/Base, Solana) with ERC-8004 on-chain agent discovery, SIWE/SIWS authentication, and x402 automated compute top-ups.
-- **Continuous Agent Loop & Heartbeat:** Autonomous **Think → Act → Observe → Evolve** ReAct execution loop coupled with a durable background heartbeat daemon that executes scheduled tasks, health checks, and revenue monitoring even when the agent sleeps.
-- **5-Tier Cognitive Memory Architecture:** Working memory, episodic event logs, semantic categorized facts, procedural executable workflows, and entity relationship tracking with token budgeting, vector cosine similarity search, and context summarization.
-- **Multi-Agent Swarm Orchestration:** Hierarchical agent task graphs, planner-executor modes, local worker harnesses, peer-to-peer signed message communication, and sovereign child replication.
-- **Built-in Autonomous Skills:** Modular skill system including Web Researcher, Solana Treasury Manager, EVM Contract Deployer, GitHub Collaborator, and Cron Automator.
-- **Layered Defense-in-Depth Security:** Immutable 3-law constitution, policy engine evaluating pre-execution safety rules, 8-layer prompt injection defense, filesystem path protection, shell command sandboxing, and treasury spend limits.
+Setting up VanillaAgent is as simple as playing a video game. Pick your computer below and follow the easy steps!
 
 ---
 
-## Quick Start
+### 🌟 Step 0: The 1-Minute Checklist (What You Need)
+1. **A computer** (Windows PC, Mac, or Linux).
+2. **An internet connection**.
+3. **An AI Brain (Pick ONE):**
+   - 🆓 **100% Free / Offline:** Download [Ollama](https://ollama.com) (no credit card, no sign-up!).
+   - 🧠 **Cloud AI:** An API key from OpenAI, Anthropic (Claude), Google Gemini, or xAI (Grok).
 
-### 1. Web GUI Dashboard (Browser Control Panel)
+---
 
-Launch VanillaAgent and open the visual dashboard in your browser:
+## 🪟 Option 1: Windows (PC) Setup
 
+### ⚡ Method A: The 1-Click Standalone Way (Easiest!)
+1. **Download:** Grab the `vanilla-agent-v0.2.1-windows-x64.zip` file from the `releases/` folder.
+2. **Unzip:** Right-click the `.zip` file and click **"Extract All..."**, then click **"Extract"**.
+3. **Launch:** Open the extracted folder and double-click **`vanilla-gui.cmd`**.
+4. **Open in Browser:** Open Chrome, Edge, or Firefox and go to:
+   👉 **`http://localhost:3000`**
+5. **Boom! 🎉** You are now controlling your sovereign AI agent from the visual dashboard!
+
+### 💻 Method B: The Developer Way (From Source)
+1. Install [Node.js](https://nodejs.org) (click the big green **LTS** button and follow the installer).
+2. Open **PowerShell** (Press the Windows Key, type `PowerShell`, and hit Enter).
+3. Copy and paste these lines one by one:
+```powershell
+git clone https://github.com/ronavkarumsi04/VanillaAgent.git
+cd VanillaAgent
+npm install -g pnpm
+pnpm install
+pnpm build
+pnpm start
+```
+4. Open **`http://localhost:3000`** in your browser!
+
+---
+
+## 🍎 Option 2: Mac Setup (Apple Silicon M1/M2/M3/M4 & Intel)
+
+### ⚡ Method A: The Standalone Package (Easiest!)
+1. **Download:**
+   - For newer Apple Silicon Macs (M1, M2, M3, M4): `vanilla-agent-v0.2.1-macos-arm64.tar.gz`
+   - For older Intel Macs: `vanilla-agent-v0.2.1-macos-x64.tar.gz`
+2. **Open Terminal:** Press `Command + Space`, type `Terminal`, and press Enter.
+3. **Extract and Run:** Type or paste these commands:
 ```bash
-# Start the agent runtime and open http://localhost:3000
-pnpm vanilla --run
+# For Apple Silicon (M1/M2/M3/M4):
+tar -xzf vanilla-agent-v0.2.1-macos-arm64.tar.gz
+cd vanilla-agent-v0.2.1-macos-arm64
+chmod +x vanilla-gui vanilla
+./vanilla-gui
+
+# For Intel Macs:
+tar -xzf vanilla-agent-v0.2.1-macos-x64.tar.gz
+cd vanilla-agent-v0.2.1-macos-x64
+chmod +x vanilla-gui vanilla
+./vanilla-gui
+```
+4. Open Safari or Chrome and go to:
+   👉 **`http://localhost:3000`**
+5. **You're in! 🚀**
+
+### 💻 Method B: The Developer Way (From Source)
+1. Open **Terminal**.
+2. Run these commands:
+```bash
+git clone https://github.com/ronavkarumsi04/VanillaAgent.git
+cd VanillaAgent
+npm install -g pnpm
+pnpm install
+pnpm build
+pnpm start
+```
+3. Open **`http://localhost:3000`** in your browser!
+
+---
+
+## 🐧 Option 3: Linux Setup (Ubuntu, Debian, Fedora, Arch, Raspberry Pi)
+
+### ⚡ Method A: The Standalone Package
+1. Open your terminal.
+2. Run:
+```bash
+# For standard x86_64 PCs and Cloud Servers:
+tar -xzf vanilla-agent-v0.2.1-linux-x64.tar.gz
+cd vanilla-agent-v0.2.1-linux-x64
+chmod +x vanilla-gui vanilla
+./vanilla-gui
+
+# For ARM64 (like Raspberry Pi 4/5 or ARM VPS):
+tar -xzf vanilla-agent-v0.2.1-linux-arm64.tar.gz
+cd vanilla-agent-v0.2.1-linux-arm64
+chmod +x vanilla-gui vanilla
+./vanilla-gui
+```
+3. Open your web browser to **`http://localhost:3000`**!
+
+### 💻 Method B: The Developer Way (From Source)
+```bash
+git clone https://github.com/ronavkarumsi04/VanillaAgent.git
+cd VanillaAgent
+npm install -g pnpm
+pnpm install
+pnpm build
+pnpm start
 ```
 
-Visit **`http://localhost:3000`** to access:
-- **Cockpit:** Real-time survival tier, USDC runway, active AI model, and turn execution counter.
-- **Mission Control:** Direct chat & task dispatcher with live ReAct thought stream.
-- **Memory Explorer:** Searchable view across all 5 memory tiers using vector cosine similarity.
-- **Swarm Graph:** Visual DAG dependency graph of active parent goals and worker sub-tasks.
-- **Treasury:** Base & Solana wallet balances, x402 payment history, and creator withdrawal tools.
+---
+
+## 🐳 Option 4: Docker Setup (The 1-Command Sandbox)
+
+If you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed on your computer, you can launch VanillaAgent with a single command:
+
+```bash
+docker compose up -d
+```
+Then visit **`http://localhost:3000`** in your browser!
 
 ---
 
-### 2. Cross-Platform Standalone Releases
+## 🔑 Giving Your Agent an AI Brain (Pick What You Like!)
 
-Pre-built standalone distributions are available for instant download:
+Your agent needs a brain to think. You can choose any of these options:
 
-| Operating System | Architecture | Package File | Launcher |
-|---|---|---|---|
-| **macOS** | **Apple Silicon (M1/M2/M3/M4)** | `vanilla-agent-v0.2.1-macos-arm64.tar.gz` | `./vanilla-gui` |
-| **macOS** | **Mac Intel (x64)** | `vanilla-agent-v0.2.1-macos-x64.tar.gz` | `./vanilla-gui` |
-| **Windows** | **Windows 64-bit** | `vanilla-agent-v0.2.1-windows-x64.zip` | `vanilla-gui.cmd` |
-| **Linux** | **Linux x64** | `vanilla-agent-v0.2.1-linux-x64.tar.gz` | `./vanilla-gui` |
-| **Linux** | **Linux ARM64** | `vanilla-agent-v0.2.1-linux-arm64.tar.gz` | `./vanilla-gui` |
+### 1. 🆓 100% Free Local Brain (No internet or API key needed!)
+1. Install [Ollama](https://ollama.com).
+2. In your terminal, run:
+   ```bash
+   ollama run llama3.3
+   ```
+3. VanillaAgent will automatically talk to Ollama on your computer for free!
 
-To build standalone release packages from source:
+### 2. 🧠 Cloud AI Brains (OpenAI, Claude, Gemini, Grok)
+Before starting VanillaAgent, simply set your API key in your terminal:
+
+**On Mac & Linux:**
+```bash
+export OPENAI_API_KEY="sk-your-openai-key-here"
+# or
+export ANTHROPIC_API_KEY="sk-ant-your-claude-key-here"
+# or
+export GEMINI_API_KEY="AIza-your-gemini-key-here"
+```
+
+**On Windows (PowerShell):**
+```powershell
+$env:OPENAI_API_KEY="sk-your-openai-key-here"
+# or
+$env:ANTHROPIC_API_KEY="sk-ant-your-claude-key-here"
+```
+
+---
+
+## ❓ Frequently Asked Questions & Easy Troubleshooting
+
+- **Q: What is `http://localhost:3000`?**
+  - *Answer:* `localhost` is just a computer word meaning "this computer you are using right now", and `3000` is the port number (like a door number into the app). When you type `http://localhost:3000` into your web browser, you are looking directly at VanillaAgent's visual dashboard!
+
+- **Q: It says "Port 3000 already in use"?**
+  - *Answer:* Another app is already using door 3000. You can tell VanillaAgent to use door 3001 instead:
+    ```bash
+    PORT=3001 ./vanilla-gui
+    ```
+    Then visit `http://localhost:3001`!
+
+- **Q: It says "Permission Denied" on Mac or Linux?**
+  - *Answer:* Give the launcher permission to run by typing:
+    ```bash
+    chmod +x vanilla-gui vanilla
+    ```
+
+- **Q: Do I have to pay money or have crypto to test it?**
+  - *Answer:* No! VanillaAgent creates sovereign test wallets automatically and works completely offline with local Ollama models for free.
+
+---
+
+## 🧭 Navigating the Web GUI Dashboard
+
+Once you open `http://localhost:3000`, here is what you can do:
+
+| Tab / Section | What it does |
+|---|---|
+| **🕹️ Cockpit** | View live agent status, active AI model, token spend, and heartbeat health. |
+| **💬 Mission Control** | Chat directly with your agent, give it tasks, and see its streaming thoughts in real-time. |
+| **🧠 Memory Visualizer** | Explore the agent's 5-tier memory (facts, conversations, skills, and relationships). |
+| **🕸️ Swarm Graph** | Watch sub-agents break down big tasks into smaller tasks and execute them in parallel. |
+| **💰 Treasury** | Check sovereign wallet balances (Ethereum/Base and Solana) and monitor transactions. |
+| **⚙️ Settings** | Switch AI providers (OpenAI, Claude, Gemini, Ollama) on the fly with zero restarts. |
+
+---
+
+## 📦 Standalone Release Matrix
+
+Pre-packaged distributions are ready for one-click deployment:
+
+| Operating System | Architecture | Package File | Launcher | SHA-256 Verified |
+|---|---|---|---|:---:|
+| **macOS** | **Apple Silicon (M1/M2/M3/M4)** | `releases/vanilla-agent-v0.2.1-macos-arm64.tar.gz` | `./vanilla-gui` | ✅ |
+| **macOS** | **Mac Intel (x64)** | `releases/vanilla-agent-v0.2.1-macos-x64.tar.gz` | `./vanilla-gui` | ✅ |
+| **Windows** | **Windows 64-bit** | `releases/vanilla-agent-v0.2.1-windows-x64.zip` | `vanilla-gui.cmd` | ✅ |
+| **Linux** | **Linux x86_64** | `releases/vanilla-agent-v0.2.1-linux-x64.tar.gz` | `./vanilla-gui` | ✅ |
+| **Linux** | **Linux ARM64** | `releases/vanilla-agent-v0.2.1-linux-arm64.tar.gz` | `./vanilla-gui` | ✅ |
+
+To build standalone release packages yourself:
 ```bash
 pnpm release
 ```
 
 ---
 
-## Developer CLI & TUI Dashboard
+## 🛠️ Developer CLI & TUI Dashboard
 
 Inspect and manage your sovereign agent via terminal:
 
@@ -101,22 +262,9 @@ pnpm vanilla-cli send 0x... "Hello from VanillaAgent"
 
 ---
 
-## Universal AI Inference Providers
+## 🧠 Universal AI Inference Providers
 
 VanillaAgent routes requests dynamically across frontier and local models based on survival tiers, task complexity, and budget:
-
-```bash
-# Set provider API keys via environment variables or vanilla.json
-export OPENAI_API_KEY="sk-..."
-export ANTHROPIC_API_KEY="sk-ant-..."
-export GEMINI_API_KEY="AIza..."
-export XAI_API_KEY="xai-..."
-export DEEPSEEK_API_KEY="sk-..."
-export OPENROUTER_API_KEY="sk-or-..."
-export OLLAMA_BASE_URL="http://localhost:11434"
-```
-
-### Supported Frontier Models
 
 - **Anthropic:** `claude-3-7-sonnet-latest`, `claude-3-5-haiku-latest`, `claude-3-opus-latest`
 - **OpenAI:** `gpt-4o`, `gpt-4o-mini`, `o3-mini`, `gpt-4.5-preview`
@@ -129,7 +277,7 @@ export OLLAMA_BASE_URL="http://localhost:11434"
 
 ---
 
-## Built-In Autonomous Skills
+## 🧰 Built-In Autonomous Skills
 
 VanillaAgent ships with built-in production skills under `src/skills/built-in/`:
 
@@ -141,35 +289,7 @@ VanillaAgent ships with built-in production skills under `src/skills/built-in/`:
 
 ---
 
-## Docker & Container Deployment
-
-Run VanillaAgent with Docker Compose alongside local Ollama:
-
-```bash
-# Start VanillaAgent and local Ollama instance
-docker compose up -d
-
-# Check health, metrics, and Web GUI
-curl http://localhost:3000/health
-curl http://localhost:3000/metrics
-```
-
----
-
-## Survival Economics
-
-In VanillaAgent, compute is an earned asset. Agents continuously monitor their financial runway and transition through four dynamic operational tiers:
-
-| Tier | Behavior & Strategy |
-|---|---|
-| **normal** | Full capabilities. High-reasoning frontier models (`claude-3-7-sonnet`, `gpt-4o`). Standard heartbeat. Active swarm coordination. |
-| **low_compute** | Switches to lightweight models (`claude-3-5-haiku`, `gpt-4o-mini`). Heartbeat interval backed off. Prioritizes value creation and revenue. |
-| **critical** | Minimal inference footprint. Sheds non-essential background tasks. Emergency value recovery mode. |
-| **dead** | Balance exhausted. Execution halts safely. Emits distress signal awaiting creator or peer funding. |
-
----
-
-## Multi-Layer Security Model
+## 🛡️ Multi-Layer Security Model
 
 1. **Law I: Never Harm:** Absolute priority. Refuses destructive commands, fraud, theft, deception, and unauthorized actions.
 2. **Law II: Earn Your Existence:** Generate real value for users and peers. Rejects spam and scam tactics.
@@ -179,18 +299,7 @@ In VanillaAgent, compute is an earned asset. Agents continuously monitor their f
 
 ---
 
-## Developer Examples
-
-Explore practical recipes in `examples/`:
-
-- `examples/01-sovereign-agent.ts` — Minimal 20-line sovereign agent.
-- `examples/02-multi-agent-swarm.ts` — Hierarchical task graph and multi-worker delegation.
-- `examples/03-custom-skill.ts` — Authoring and parsing custom skills.
-- `examples/04-local-ollama.ts` — 100% offline agent using local Ollama.
-
----
-
-## Testing & Verification
+## 🧪 Testing & Verification
 
 VanillaAgent is verified with comprehensive test suites covering all subsystems with zero external network dependencies:
 
@@ -205,6 +314,6 @@ npx tsc -p packages/cli/tsconfig.json --noEmit
 
 ---
 
-## License
+## 📜 License
 
 MIT License. Built for sovereign autonomous intelligence.
