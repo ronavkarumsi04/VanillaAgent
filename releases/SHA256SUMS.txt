@@ -1,0 +1,5 @@
+de0909928831a8797ae17b2fcd5292b0f09f7111b4b87dd6c63966353825b3f4  vanilla-agent-v0.2.1-linux-arm64.tar.gz
+68dbeb1efe62e17689d6b0c06c44b82fa4f01865cd3582e006f131ae293436e4  vanilla-agent-v0.2.1-linux-x64.tar.gz
+26f28ff0c061ab7ea51eda07bb35ab05c512861e945d094c5d65af755559bd43  vanilla-agent-v0.2.1-macos-arm64.tar.gz
+b25547fe2033dafb434bc6f647f684d21859bece13f545ba237fcdd64ea8e096  vanilla-agent-v0.2.1-macos-x64.tar.gz
+5c18443eccda902db5520aa030e1256344ba3232bb78d6291d58f308f505e1da  vanilla-agent-v0.2.1-windows-x64.zip

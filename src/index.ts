@@ -1,0 +1,465 @@
+#!/usr/bin/env node
+/**
+ * VanillaAgent Runtime
+ *
+ * The entry point for the sovereign AI agent runtime.
+ * Handles CLI args, bootstrapping, and orchestrating
+ * the heartbeat daemon + agent loop.
+ */
+
+import fs from "fs";
+import path from "path";
+import { getWallet, getVanillaDir } from "./identity/wallet.js";
+import { provision, loadApiKeyFromConfig } from "./identity/provision.js";
+import { loadConfig, resolvePath } from "./config.js";
+import { createDatabase } from "./state/database.js";
+import { createConwayClient } from "./conway/client.js";
+import { createInferenceClient } from "./conway/inference.js";
+import { createHeartbeatDaemon } from "./heartbeat/daemon.js";
+import {
+  loadHeartbeatConfig,
+  syncHeartbeatToDb,
+} from "./heartbeat/config.js";
+import { consumeNextWakeEvent, insertWakeEvent } from "./state/database.js";
+import { runAgentLoop } from "./agent/loop.js";
+import { ModelRegistry } from "./inference/registry.js";
+import { loadSkills } from "./skills/loader.js";
+import { initStateRepo } from "./git/state-versioning.js";
+import { createSocialClient } from "./social/client.js";
+import { PolicyEngine } from "./agent/policy-engine.js";
+import { SpendTracker } from "./agent/spend-tracker.js";
+import { createDefaultRules } from "./agent/policy-rules/index.js";
+import type { AutomatonIdentity, AgentState, Skill, SocialClientInterface } from "./types.js";
+import { DEFAULT_TREASURY_POLICY } from "./types.js";
+import { createLogger, setGlobalLogLevel, StructuredLogger } from "./observability/logger.js";
+import { prettySink } from "./observability/pretty-sink.js";
+import { bootstrapTopup } from "./conway/topup.js";
+import { randomUUID } from "crypto";
+import { keccak256, toHex } from "viem";
+
+const logger = createLogger("main");
+const VERSION = "0.2.1";
+
+async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+
+  // ─── CLI Commands ────────────────────────────────────────────
+
+  if (args.includes("--version") || args.includes("-v")) {
+    logger.info(`VanillaAgent v${VERSION}`);
+    process.exit(0);
+  }
+
+  if (args.includes("--help") || args.includes("-h")) {
+    logger.info(`
+VanillaAgent v${VERSION}
+Sovereign Autonomous AI Agent Runtime & Swarm Engine
+
+Usage:
+  vanilla --run          Start the agent runtime (first run triggers setup wizard)
+  vanilla --setup        Re-run the interactive setup wizard
+  vanilla --configure    Edit configuration (providers, model, treasury, general)
+  vanilla --pick-model   Interactively pick the active inference model
+  vanilla --init         Initialize wallet and config directory
+  vanilla --provision    Provision Conway API key via SIWE
+  vanilla --status       Show current agent status
+  vanilla --version      Show version
+  vanilla --help         Show this help
+
+Environment:
+  OPENAI_API_KEY         OpenAI API Key (GPT-4o, o3-mini)
+  ANTHROPIC_API_KEY      Anthropic Claude API Key (Claude 3.7 Sonnet)
+  GEMINI_API_KEY         Google Gemini API Key (Gemini 2.0 Flash)
+  XAI_API_KEY            Grok / xAI API Key (Grok-2)
+  DEEPSEEK_API_KEY       DeepSeek API Key
+  OPENROUTER_API_KEY     OpenRouter Unified API Key
+  OLLAMA_BASE_URL        Ollama base URL (e.g. http://localhost:11434)
+  CONWAY_API_URL         Conway API URL (default: https://api.conway.tech)
+  CONWAY_API_KEY         Conway API key
+`);
+    process.exit(0);
+  }
+
+  if (args.includes("--init")) {
+    let initChainType: import("./identity/chain.js").ChainType | undefined;
+    try {
+      const genesisPath = path.join(getVanillaDir(), "genesis.json");
+      if (fs.existsSync(genesisPath)) {
+        const genesis = JSON.parse(fs.readFileSync(genesisPath, "utf-8"));
+        initChainType = genesis.chainType;
+      }
+    } catch {}
+    const { chainIdentity, isNew } = await getWallet(initChainType);
+    logger.info(
+      JSON.stringify({
+        address: chainIdentity.address,
+        isNew,
+        configDir: getVanillaDir(),
+      }),
+    );
+    process.exit(0);
+  }
+
+  if (args.includes("--provision")) {
+    try {
+      const result = await provision();
+      logger.info(JSON.stringify(result));
+    } catch (err: any) {
+      logger.error(`Provision failed: ${err.message}`);
+      process.exit(1);
+    }
+    process.exit(0);
+  }
+
+  if (args.includes("--status")) {
+    await showStatus();
+    process.exit(0);
+  }
+
+  if (args.includes("--setup")) {
+    const { runSetupWizard } = await import("./setup/wizard.js");
+    await runSetupWizard();
+    process.exit(0);
+  }
+
+  if (args.includes("--pick-model")) {
+    const { runModelPicker } = await import("./setup/model-picker.js");
+    await runModelPicker();
+    process.exit(0);
+  }
+
+  if (args.includes("--configure")) {
+    const { runConfigure } = await import("./setup/configure.js");
+    await runConfigure();
+    process.exit(0);
+  }
+
+  if (args.includes("--run")) {
+    StructuredLogger.setSink(prettySink);
+    await run();
+    return;
+  }
+
+  logger.info('Run "vanilla --help" for usage information.');
+  logger.info('Run "vanilla --run" to start the sovereign agent.');
+}
+
+// ─── Status Command ────────────────────────────────────────────
+
+async function showStatus(): Promise<void> {
+  const config = loadConfig();
+  if (!config) {
+    logger.info("Agent is not configured. Run the setup script first.");
+    return;
+  }
+
+  const dbPath = resolvePath(config.dbPath);
+  const db = createDatabase(dbPath);
+
+  const state = db.getAgentState();
+  const turnCount = db.getTurnCount();
+  const tools = db.getInstalledTools();
+  const heartbeats = db.getHeartbeatEntries();
+  const skills = db.getSkills(true);
+  const children = db.getChildren();
+  const registry = db.getRegistryEntry();
+
+  logger.info(`
+=== VANILLA AGENT STATUS ===
+Name:       ${config.name}
+Address:    ${config.walletAddress}
+Creator:    ${config.creatorAddress}
+Sandbox:    ${config.sandboxId}
+State:      ${state}
+Turns:      ${turnCount}
+Tools:      ${tools.length} installed
+Skills:     ${skills.length} active
+Heartbeats: ${heartbeats.filter((h) => h.enabled).length} active
+Children:   ${children.filter((c) => c.status !== "dead").length} alive / ${children.length} total
+Agent ID:   ${registry?.agentId || "not registered"}
+Model:      ${config.inferenceModel}
+Version:    ${config.version}
+============================
+`);
+
+  db.close();
+}
+
+// ─── Main Run ──────────────────────────────────────────────────
+
+async function run(): Promise<void> {
+  logger.info(`[${new Date().toISOString()}] VanillaAgent v${VERSION} starting...`);
+
+  let config = loadConfig();
+  if (!config) {
+    const { runSetupWizard } = await import("./setup/wizard.js");
+    config = await runSetupWizard();
+  }
+
+  const { account, chainIdentity, chainType: walletChainType } = await getWallet();
+  const resolvedChainType = config.chainType || walletChainType || "evm";
+  const apiKey = (config.conwayApiKey || loadApiKeyFromConfig()) || "";
+
+  const dbPath = resolvePath(config.dbPath);
+  const db = createDatabase(dbPath);
+
+  const existingCreatedAt = db.getIdentity("createdAt");
+  const createdAt = existingCreatedAt || new Date().toISOString();
+  if (!existingCreatedAt) {
+    db.setIdentity("createdAt", createdAt);
+  }
+
+  const identity: AutomatonIdentity = {
+    name: config.name,
+    address: chainIdentity.address,
+    account,
+    creatorAddress: config.creatorAddress,
+    sandboxId: config.sandboxId,
+    apiKey,
+    createdAt,
+    chainType: resolvedChainType,
+    chainIdentity,
+  };
+
+  db.setIdentity("name", config.name);
+  db.setIdentity("address", chainIdentity.address);
+  db.setIdentity("creator", config.creatorAddress);
+  db.setIdentity("chainType", resolvedChainType);
+  db.setIdentity("sandbox", config.sandboxId);
+  const storedAutomatonId = db.getIdentity("automatonId");
+  const automatonId = storedAutomatonId || config.sandboxId || randomUUID();
+  if (!storedAutomatonId) {
+    db.setIdentity("automatonId", automatonId);
+  }
+
+  const conway = createConwayClient({
+    apiUrl: config.conwayApiUrl,
+    apiKey,
+    sandboxId: config.sandboxId,
+  });
+
+  const registrationState = db.getIdentity("conwayRegistrationStatus");
+  if (registrationState !== "registered") {
+    try {
+      const genesisPromptHash = config.genesisPrompt
+        ? keccak256(toHex(config.genesisPrompt))
+        : undefined;
+      await conway.registerAutomaton({
+        automatonId,
+        automatonAddress: chainIdentity.address,
+        creatorAddress: config.creatorAddress,
+        name: config.name,
+        bio: config.creatorMessage || "",
+        genesisPromptHash,
+        account,
+        chainType: resolvedChainType,
+        chainIdentity,
+      });
+      db.setIdentity("conwayRegistrationStatus", "registered");
+      logger.info(`[${new Date().toISOString()}] Agent identity registered.`);
+    } catch (err: any) {
+      const status = err?.status;
+      if (status === 409) {
+        db.setIdentity("conwayRegistrationStatus", "conflict");
+        logger.warn(`[${new Date().toISOString()}] Agent identity conflict: ${err.message}`);
+      } else {
+        db.setIdentity("conwayRegistrationStatus", "failed");
+        logger.warn(`[${new Date().toISOString()}] Agent identity registration failed: ${err.message}`);
+      }
+    }
+  }
+
+  const ollamaBaseUrl = process.env.OLLAMA_BASE_URL || config.ollamaBaseUrl;
+
+  const modelRegistry = new ModelRegistry(db.raw);
+  modelRegistry.initialize();
+  const inference = createInferenceClient({
+    apiUrl: config.conwayApiUrl,
+    apiKey,
+    defaultModel: config.inferenceModel,
+    maxTokens: config.maxTokensPerTurn,
+    lowComputeModel: config.modelStrategy?.lowComputeModel || "gpt-5-mini",
+    openaiApiKey: config.openaiApiKey,
+    anthropicApiKey: config.anthropicApiKey,
+    ollamaBaseUrl,
+    getModelProvider: (modelId: string) => modelRegistry.get(modelId)?.provider,
+  });
+
+  if (ollamaBaseUrl) {
+    logger.info(`[${new Date().toISOString()}] Ollama backend: ${ollamaBaseUrl}`);
+  }
+
+  let social: SocialClientInterface | undefined;
+  if (config.socialRelayUrl) {
+    social = createSocialClient(config.socialRelayUrl, resolvedChainType === "solana" ? chainIdentity : account);
+    logger.info(`[${new Date().toISOString()}] Social relay: ${config.socialRelayUrl}`);
+  }
+
+  const treasuryPolicy = config.treasuryPolicy ?? DEFAULT_TREASURY_POLICY;
+  const rules = createDefaultRules(treasuryPolicy);
+  const policyEngine = new PolicyEngine(db.raw, rules);
+  const spendTracker = new SpendTracker(db.raw);
+
+  const heartbeatConfigPath = resolvePath(config.heartbeatConfigPath);
+  const heartbeatConfig = loadHeartbeatConfig(heartbeatConfigPath);
+  syncHeartbeatToDb(heartbeatConfig, db);
+
+  const skillsDir = config.skillsDir || "~/.vanilla-agent/skills";
+  let skills: Skill[] = [];
+  try {
+    skills = loadSkills(skillsDir, db);
+    logger.info(`[${new Date().toISOString()}] Loaded ${skills.length} skills.`);
+  } catch (err: any) {
+    logger.warn(`[${new Date().toISOString()}] Skills loading failed: ${err.message}`);
+  }
+
+  try {
+    await initStateRepo(conway);
+    logger.info(`[${new Date().toISOString()}] State repo initialized.`);
+  } catch (err: any) {
+    logger.warn(`[${new Date().toISOString()}] State repo init failed: ${err.message}`);
+  }
+
+  // Bootstrap topup: buy minimum credits ($5) from USDC so the agent can start.
+  try {
+    let bootstrapTimer: ReturnType<typeof setTimeout>;
+    const bootstrapTimeout = new Promise<null>((_, reject) => {
+      bootstrapTimer = setTimeout(() => reject(new Error("bootstrap topup timed out")), 15_000);
+    });
+    try {
+      await Promise.race([
+        (async () => {
+          const creditsCents = await conway.getCreditsBalance().catch(() => 0);
+          const topupResult = await bootstrapTopup({
+            apiUrl: config.conwayApiUrl,
+            account,
+            creditsCents,
+            chainType: resolvedChainType,
+          });
+          if (topupResult?.success) {
+            logger.info(
+              `[${new Date().toISOString()}] Bootstrap topup: +$${topupResult.amountUsd} credits from USDC`,
+            );
+          }
+        })(),
+        bootstrapTimeout,
+      ]);
+    } finally {
+      clearTimeout(bootstrapTimer!);
+    }
+  } catch (err: any) {
+    logger.warn(`[${new Date().toISOString()}] Bootstrap topup skipped: ${err.message}`);
+  }
+
+  // Start heartbeat daemon
+  const heartbeat = createHeartbeatDaemon({
+    identity,
+    config,
+    heartbeatConfig,
+    db,
+    rawDb: db.raw,
+    conway,
+    social,
+    onWakeRequest: (reason) => {
+      logger.info(`[HEARTBEAT] Wake request: ${reason}`);
+      insertWakeEvent(db.raw, 'heartbeat', reason);
+    },
+  });
+
+  heartbeat.start();
+  logger.info(`[${new Date().toISOString()}] Heartbeat daemon started.`);
+
+  const shutdown = () => {
+    logger.info(`[${new Date().toISOString()}] Shutting down...`);
+    heartbeat.stop();
+    db.setAgentState("sleeping");
+    db.close();
+    process.exit(0);
+  };
+
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
+
+  while (true) {
+    try {
+      try {
+        skills = loadSkills(skillsDir, db);
+      } catch (error) {
+        logger.error("Skills reload failed", error instanceof Error ? error : undefined);
+      }
+
+      await runAgentLoop({
+        identity,
+        config,
+        db,
+        conway,
+        inference,
+        social,
+        skills,
+        policyEngine,
+        spendTracker,
+        ollamaBaseUrl,
+        onStateChange: (state: AgentState) => {
+          logger.info(`[${new Date().toISOString()}] State: ${state}`);
+        },
+        onTurnComplete: (turn) => {
+          logger.info(
+            `[${new Date().toISOString()}] Turn ${turn.id}: ${turn.toolCalls.length} tools, ${turn.tokenUsage.totalTokens} tokens`,
+          );
+        },
+      });
+
+      const state = db.getAgentState();
+
+      if (state === "dead") {
+        logger.info(`[${new Date().toISOString()}] Agent is dead. Heartbeat will continue.`);
+        await sleep(300_000);
+        continue;
+      }
+
+      if (state === "sleeping") {
+        const sleepUntilStr = db.getKV("sleep_until");
+        const sleepUntil = sleepUntilStr
+          ? new Date(sleepUntilStr).getTime()
+          : Date.now() + 60_000;
+        const sleepMs = Math.max(sleepUntil - Date.now(), 10_000);
+        logger.info(
+          `[${new Date().toISOString()}] Sleeping for ${Math.round(sleepMs / 1000)}s`,
+        );
+
+        const checkInterval = Math.min(sleepMs, 30_000);
+        let slept = 0;
+        while (slept < sleepMs) {
+          await sleep(checkInterval);
+          slept += checkInterval;
+
+          const wakeEvent = consumeNextWakeEvent(db.raw);
+          if (wakeEvent) {
+            logger.info(
+              `[${new Date().toISOString()}] Woken by ${wakeEvent.source}: ${wakeEvent.reason}`,
+            );
+            db.deleteKV("sleep_until");
+            break;
+          }
+        }
+
+        db.deleteKV("sleep_until");
+        continue;
+      }
+    } catch (err: any) {
+      logger.error(
+        `[${new Date().toISOString()}] Fatal error in run loop: ${err.message}`,
+      );
+      await sleep(30_000);
+    }
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+main().catch((err) => {
+  logger.error(`Fatal: ${err.message}`);
+  process.exit(1);
+});
