@@ -43,6 +43,17 @@ export class ObservabilityServer {
       this.server = http.createServer((req, res) => {
         const url = req.url || "/";
 
+        // Set permissive CORS headers for local area network (LAN) access
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+        if (req.method === "OPTIONS") {
+          res.writeHead(204);
+          res.end();
+          return;
+        }
+
         // Serve Web GUI Single Page Dashboard
         if (url === "/" || url === "/gui" || url === "/dashboard" || url === "/app") {
           res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
