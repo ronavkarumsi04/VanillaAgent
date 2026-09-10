@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# ─────────────────────────────────────────────────────────────
+# VanillaAgent — sovereign runtime launcher
+#   vanilla --run        start the agent + Web GUI dashboard
+#   vanilla --status     show agent health
+#   vanilla --help       runtime options
+# ─────────────────────────────────────────────────────────────
+set -euo pipefail
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+ROOT="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+exec node "$ROOT/lib/bootstrap.mjs" core "$@"

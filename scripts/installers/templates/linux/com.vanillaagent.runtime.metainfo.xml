@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.vanillaagent.runtime</id>
+  <name>VanillaAgent</name>
+  <summary>Sovereign autonomous AI agent runtime and swarm engine</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <developer_name>VanillaAgent</developer_name>
+  <url type="homepage">https://github.com/ronavkarumsi04/VanillaAgent</url>
+
+  <description>
+    <p>
+      VanillaAgent is a sovereign autonomous agent runtime: it holds its own EVM and
+      Solana wallet, pays for its own compute, runs continuously across local machines
+      or cloud sandboxes and coordinates work inside multi-agent swarms.
+    </p>
+    <p>
+      The Web GUI control panel (served on http://localhost:3000) provides a cockpit,
+      mission control chat, a five-tier memory explorer, a swarm task graph and a
+      treasury view of the agent's on-chain balances.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">vanilla-agent.desktop</launchable>
+
+  <provides>
+    <binary>vanilla</binary>
+    <binary>vanilla-gui</binary>
+    <binary>vanilla-cli</binary>
+  </provides>
+
+  <releases>
+    <release version="@@VERSION@@" date="@@DATE@@" />
+  </releases>
+
+  <content_rating type="oars-1.1" />
+</component>

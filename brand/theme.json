@@ -1,0 +1,53 @@
+{
+  "$schema": "https://vanillaagent.dev/brand/theme.json",
+  "brand": "VanillaAgent",
+  "tagline": "Sovereign Autonomous AI Agent Runtime & Swarm Engine",
+  "version": "0.2.1",
+  "palette": {
+    "brand-50": "#f0fdfa",
+    "brand-400": "#2dd4bf",
+    "brand-500": "#14b8a6",
+    "brand-600": "#0d9488",
+    "brand-900": "#134e4a",
+    "dark-800": "#181b20",
+    "dark-850": "#121418",
+    "dark-900": "#0c0d10",
+    "dark-950": "#060708",
+    "slate-100": "#f1f5f9",
+    "slate-200": "#e2e8f0",
+    "slate-300": "#cbd5e1",
+    "slate-400": "#94a3b8",
+    "slate-500": "#64748b",
+    "emerald-400": "#34d399",
+    "rose-400": "#fb7185",
+    "amber-400": "#fbbf24"
+  },
+  "typography": {
+    "sans": {
+      "family": "Plus Jakarta Sans",
+      "weights": {
+        "regular": "brand/fonts/plus-jakarta-sans-latin-400-normal.woff",
+        "bold": "brand/fonts/plus-jakarta-sans-latin-700-normal.woff",
+        "extrabold": "brand/fonts/plus-jakarta-sans-latin-800-normal.woff"
+      }
+    },
+    "mono": {
+      "family": "JetBrains Mono",
+      "weights": {
+        "regular": "brand/fonts/jetbrains-mono-latin-400-normal.woff",
+        "bold": "brand/fonts/jetbrains-mono-latin-700-normal.woff"
+      }
+    }
+  },
+  "logo": {
+    "mark": "Rounded-square (squircle) tile filled with a diagonal teal gradient (brand-600 -> brand-400) and a dark-950 'V' glyph.",
+    "wordmark": "Plus Jakarta Sans ExtraBold, letter-spacing -0.02em",
+    "eyebrow": "JetBrains Mono uppercase, +0.18em tracking, brand-400"
+  },
+  "installer": {
+    "background": "dark-950 base, radial teal glow at 18% opacity, 1px white/8% hairlines (glassmorphism)",
+    "accent": "#14b8a6",
+    "progress": "brand-500 fill on dark-850 track",
+    "radius": 14
+  }
+}
