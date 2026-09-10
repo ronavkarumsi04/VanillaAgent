@@ -268,6 +268,8 @@ Once you open `http://localhost:3000`, here is what you can do:
 
 ## 📦 Native Installers (Recommended)
 
+> **[Download installers from the GitHub Release →](https://github.com/ronavkarumsi04/VanillaAgent/releases/tag/v0.2.1)**
+
 VanillaAgent ships real, platform-native installers — themed in the same dark teal as the
 Web GUI, with the brand logo, wordmark and typography carried through every screen.
 
@@ -297,6 +299,16 @@ pnpm installers:verify   # structural verification of every artifact
 The pipeline lives in [`scripts/installers/`](scripts/installers/README.md). Targets are
 skipped (with a note) when their toolchain is unavailable: `makensis` for Windows,
 `dpkg-deb` for Debian packages, `python3` for RPMs.
+
+### CI / automated release
+
+Push a `v*` tag to trigger the [release workflow](.github/workflows/release.yml), which
+builds all installers on GitHub Actions (with NSIS for the Windows `.exe`), verifies them,
+and publishes the release. Or run locally:
+
+```bash
+bash scripts/publish-release.sh v0.2.1 --skip-build   # attach to an existing release
+```
 
 ---
 
