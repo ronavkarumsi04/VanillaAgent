@@ -1,5 +1,6 @@
 node_modules
 dist
+build
 .env
 *.log
 .DS_Store
@@ -16,3 +17,11 @@ releases/*.tar.gz
 releases/*.zip
 releases/*.tgz
 
+
+# Native installers built by scripts/build-installers.sh
+releases/*.pkg
+releases/*.exe
+releases/*.deb
+releases/*.rpm
+releases/*-unix-installer.sh
+releases/index.html

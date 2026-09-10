@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# ─────────────────────────────────────────────────────────────
+# VanillaAgent — creator & developer CLI
+#   vanilla-cli status | doctor | logs | memory | dashboard
+# ─────────────────────────────────────────────────────────────
+set -euo pipefail
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+ROOT="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+exec node "$ROOT/lib/bootstrap.mjs" cli "$@"

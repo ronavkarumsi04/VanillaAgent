@@ -1,0 +1,138 @@
+{
+  "name": "VanillaAgent",
+  "version": "0.2.1",
+  "generatedAt": "2026-09-10T01:47:08.543Z",
+  "repository": "https://github.com/ronavkarumsi04/VanillaAgent",
+  "requirements": {
+    "node": ">=20.0.0",
+    "memory": "2 GB RAM minimum",
+    "disk": "3 MB runtime + ~180 MB for dependencies on first launch",
+    "network": "Required once, to fetch runtime dependencies (or run fully local with Ollama)"
+  },
+  "artifacts": [
+    {
+      "file": "VanillaAgent-0.2.1-macOS-AppleSilicon.pkg",
+      "os": "macos",
+      "arch": "arm64",
+      "kind": "pkg",
+      "label": "macOS · Apple Silicon (M1/M2/M3/M4)",
+      "howto": [
+        "Open the downloaded .pkg file.",
+        "Follow the installer (it installs to /Applications/VanillaAgent).",
+        "If macOS says the package is from an unidentified developer, right-click it and choose Open.",
+        "Launch \"VanillaAgent\" from Applications, or run: vanilla-gui"
+      ],
+      "primary": true,
+      "size": 1292575,
+      "sizeLabel": "1.2 MB",
+      "sha256": "0084d8f7b3456eba50b49698cf1a1014af1283f0d4e24cbe0e0519caa10a6456"
+    },
+    {
+      "file": "VanillaAgent-0.2.1-macOS-Intel.pkg",
+      "os": "macos",
+      "arch": "x64",
+      "kind": "pkg",
+      "label": "macOS · Intel",
+      "howto": [
+        "Open the downloaded .pkg file.",
+        "Follow the installer (it installs to /Applications/VanillaAgent).",
+        "Launch \"VanillaAgent\" from Applications, or run: vanilla-gui"
+      ],
+      "primary": true,
+      "size": 1292575,
+      "sizeLabel": "1.2 MB",
+      "sha256": "84db1620790576bb6ef01105560ee76d8e20ac530872d3062a109e13320de979"
+    },
+    {
+      "file": "VanillaAgent-0.2.1-Windows-x64-Setup.exe",
+      "os": "windows",
+      "arch": "x64",
+      "kind": "exe",
+      "label": "Windows · 64-bit installer",
+      "howto": [
+        "Run the downloaded Setup executable.",
+        "Accept the license, pick a location and let it install the runtime dependencies.",
+        "Tick “Launch VanillaAgent” on the last page — the dashboard opens at http://localhost:3000."
+      ],
+      "primary": true,
+      "size": 903223,
+      "sizeLabel": "882 KB",
+      "sha256": "5029e4087759931b249555ed721fcc5cb3412630ac3ddf390220fef278bb3260"
+    },
+    {
+      "file": "vanilla-agent_0.2.1_arm64.deb",
+      "os": "linux",
+      "arch": "arm64",
+      "kind": "deb",
+      "label": "Debian / Ubuntu · ARM64",
+      "howto": [
+        "sudo apt install ./vanilla-agent-0.2.1.deb",
+        "vanilla-gui   # starts the runtime + dashboard on http://localhost:3000"
+      ],
+      "size": 845560,
+      "sizeLabel": "826 KB",
+      "sha256": "0d3f2a45cee43d39f7c3c451c66e2e1d0ff6dcdfe9292fc2a2711d54294b53c6"
+    },
+    {
+      "file": "vanilla-agent-0.2.1-1.aarch64.rpm",
+      "os": "linux",
+      "arch": "arm64",
+      "kind": "rpm",
+      "label": "Fedora / RHEL / openSUSE · aarch64",
+      "howto": [
+        "sudo dnf install ./vanilla-agent-0.2.1.rpm",
+        "vanilla-gui"
+      ],
+      "size": 1113831,
+      "sizeLabel": "1.1 MB",
+      "sha256": "7ffb2f8f3b09e4c3bcd1167472d9c1a66120b04dc5f0196e9c6d663f461b88bc"
+    },
+    {
+      "file": "vanilla-agent_0.2.1_amd64.deb",
+      "os": "linux",
+      "arch": "x64",
+      "kind": "deb",
+      "label": "Debian / Ubuntu · x86_64",
+      "howto": [
+        "sudo apt install ./vanilla-agent-0.2.1.deb",
+        "vanilla-gui   # starts the runtime + dashboard on http://localhost:3000",
+        "systemctl --user enable --now vanilla-agent.service   # optional background service"
+      ],
+      "primary": true,
+      "size": 845540,
+      "sizeLabel": "826 KB",
+      "sha256": "be6b9948db05647dba35322dfdf4f64cd7094c2893db3febc853a3508000d6b1"
+    },
+    {
+      "file": "vanilla-agent-0.2.1-1.x86_64.rpm",
+      "os": "linux",
+      "arch": "x64",
+      "kind": "rpm",
+      "label": "Fedora / RHEL / openSUSE · x86_64",
+      "howto": [
+        "sudo dnf install ./vanilla-agent-0.2.1.rpm      # or: sudo zypper install ./…rpm",
+        "vanilla-gui   # starts the runtime + dashboard on http://localhost:3000"
+      ],
+      "primary": true,
+      "size": 1113826,
+      "sizeLabel": "1.1 MB",
+      "sha256": "5aa3d78a8e0188300910378bb7d0411a2f86fa37506a33203def8d16367f62e1"
+    },
+    {
+      "file": "VanillaAgent-0.2.1-unix-installer.sh",
+      "os": "unix",
+      "arch": "any",
+      "kind": "sh",
+      "label": "Universal installer · macOS + Linux",
+      "howto": [
+        "chmod +x VanillaAgent-0.2.1-unix-installer.sh",
+        "./VanillaAgent-0.2.1-unix-installer.sh",
+        "# non-interactive:  ./VanillaAgent-0.2.1-unix-installer.sh --yes --prefix ~/vanilla-agent"
+      ],
+      "primary": true,
+      "size": 1023702,
+      "sizeLabel": "1000 KB",
+      "sha256": "72b2ec66961ede7bf9452f35652ccd6a112f9c322ace5f4a6d5697e1fbb5c104"
+    }
+  ]
+}

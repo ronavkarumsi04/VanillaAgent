@@ -35,15 +35,25 @@ Setting up VanillaAgent is as simple as playing a video game. Pick your computer
 
 ## 🪟 Option 1: Windows (PC) Setup
 
-### ⚡ Method A: The 1-Click Standalone Way (Easiest!)
+### ⚡ Method A: The Native Installer (Easiest!)
+1. **Download:** `VanillaAgent-0.2.1-Windows-x64-Setup.exe` from the `releases/` folder.
+2. **Run it:** Double-click the Setup file and click through the installer.
+   - Accept the license, pick where VanillaAgent lives, and tick **Add to PATH** if you
+     want `vanilla` from any terminal.
+   - The installer checks for **Node.js 20+** and fetches runtime dependencies for you.
+3. **Launch:** Tick **Launch VanillaAgent** on the last page — or use the Start Menu /
+   desktop shortcut later. Your browser opens at 👉 **`http://localhost:3000`**
+4. **Boom! 🎉** You are now controlling your sovereign AI agent from the visual dashboard!
+   *Uninstall any time from* **Settings → Apps → VanillaAgent**.
+
+### 📦 Method B: The Portable Archive
 1. **Download:** Grab the `vanilla-agent-v0.2.1-windows-x64.zip` file from the `releases/` folder.
 2. **Unzip:** Right-click the `.zip` file and click **"Extract All..."**, then click **"Extract"**.
 3. **Launch:** Open the extracted folder and double-click **`vanilla-gui.cmd`**.
 4. **Open in Browser:** Open Chrome, Edge, or Firefox and go to:
    👉 **`http://localhost:3000`**
-5. **Boom! 🎉** You are now controlling your sovereign AI agent from the visual dashboard!
 
-### 💻 Method B: The Developer Way (From Source)
+### 💻 Method C: The Developer Way (From Source)
 1. Install [Node.js](https://nodejs.org) (click the big green **LTS** button and follow the installer).
 2. Open **PowerShell** (Press the Windows Key, type `PowerShell`, and hit Enter).
 3. Copy and paste these lines one by one:
@@ -61,7 +71,22 @@ pnpm start
 
 ## 🍎 Option 2: Mac Setup (Apple Silicon M1/M2/M3/M4 & Intel)
 
-### ⚡ Method A: The Standalone Package (Easiest!)
+### ⚡ Method A: The Native Installer (Easiest!)
+1. **Download:**
+   - For newer Apple Silicon Macs (M1, M2, M3, M4): `VanillaAgent-0.2.1-macOS-AppleSilicon.pkg`
+   - For older Intel Macs: `VanillaAgent-0.2.1-macOS-Intel.pkg`
+2. **Run it:** Double-click the `.pkg` and click through the themed installer. It installs
+   **VanillaAgent.app** into `/Applications` and links `vanilla`, `vanilla-gui` and
+   `vanilla-cli` into `/usr/local/bin`.
+   *If macOS says the package is from an unidentified developer, right-click it and choose **Open**.*
+3. **Open Terminal** (`Command + Space` → `Terminal`) and type:
+```bash
+vanilla-gui
+```
+4. Your browser opens at 👉 **`http://localhost:3000`**. **You're in! 🚀**
+   *To remove it:* `sudo /Applications/VanillaAgent/uninstall.sh`
+
+### 📦 Method B: The Portable Archive
 1. **Download:**
    - For newer Apple Silicon Macs (M1, M2, M3, M4): `vanilla-agent-v0.2.1-macos-arm64.tar.gz`
    - For older Intel Macs: `vanilla-agent-v0.2.1-macos-x64.tar.gz`
@@ -84,7 +109,7 @@ chmod +x vanilla-gui vanilla
    👉 **`http://localhost:3000`**
 5. **You're in! 🚀**
 
-### 💻 Method B: The Developer Way (From Source)
+### 💻 Method C: The Developer Way (From Source)
 1. Open **Terminal**.
 2. Run these commands:
 ```bash
@@ -101,7 +126,35 @@ pnpm start
 
 ## 🐧 Option 3: Linux Setup (Ubuntu, Debian, Fedora, Arch, Raspberry Pi)
 
-### ⚡ Method A: The Standalone Package
+### ⚡ Method A: The Native Package (Easiest!)
+1. Open your terminal.
+2. Install the package for your distribution:
+```bash
+# Debian / Ubuntu / Mint / Pop!_OS  (x86_64)
+sudo apt install ./vanilla-agent_0.2.1_amd64.deb
+
+# Debian / Ubuntu on ARM64 (Raspberry Pi 4/5, ARM VPS)
+sudo apt install ./vanilla-agent_0.2.1_arm64.deb
+
+# Fedora / RHEL / Rocky / AlmaLinux / openSUSE  (x86_64)
+sudo dnf install ./vanilla-agent-0.2.1-1.x86_64.rpm
+
+# Fedora / RHEL on aarch64
+sudo dnf install ./vanilla-agent-0.2.1-1.aarch64.rpm
+
+# Any distro, any architecture — the universal shell installer
+chmod +x VanillaAgent-0.2.1-unix-installer.sh
+./VanillaAgent-0.2.1-unix-installer.sh
+```
+3. Start the dashboard:
+```bash
+vanilla-gui            # http://localhost:3000
+systemctl --user enable --now vanilla-agent.service   # optional: run in the background
+```
+4. **Remove it later:** `sudo apt remove vanilla-agent`, `sudo dnf remove vanilla-agent`,
+   or `sudo /opt/vanilla-agent/lib/uninstall.sh`.
+
+### 📦 Method B: The Portable Archive
 1. Open your terminal.
 2. Run:
 ```bash
@@ -119,7 +172,7 @@ chmod +x vanilla-gui vanilla
 ```
 3. Open your web browser to **`http://localhost:3000`**!
 
-### 💻 Method B: The Developer Way (From Source)
+### 💻 Method C: The Developer Way (From Source)
 ```bash
 git clone https://github.com/ronavkarumsi04/VanillaAgent.git
 cd VanillaAgent
@@ -213,9 +266,43 @@ Once you open `http://localhost:3000`, here is what you can do:
 
 ---
 
-## 📦 Standalone Release Matrix
+## 📦 Native Installers (Recommended)
 
-Pre-packaged distributions are ready for one-click deployment:
+VanillaAgent ships real, platform-native installers — themed in the same dark teal as the
+Web GUI, with the brand logo, wordmark and typography carried through every screen.
+
+| Platform | Installer | What it does |
+|---|---|---|
+| 🍎 **Mac · Apple Silicon (M1/M2/M3/M4)** | `VanillaAgent-0.2.1-macOS-AppleSilicon.pkg` | Apple Installer package with a themed welcome, license and conclusion. Installs to `/Applications/VanillaAgent`, adds a real `VanillaAgent.app` and links `vanilla` / `vanilla-gui` / `vanilla-cli` into `/usr/local/bin`. |
+| 🍎 **Mac · Intel** | `VanillaAgent-0.2.1-macOS-Intel.pkg` | Same package, built for Intel Macs. |
+| 🪟 **Windows · 64-bit** | `VanillaAgent-0.2.1-Windows-x64-Setup.exe` | NSIS setup wizard with dark branded pages: welcome → license → install location + integration options → progress (installs dependencies) → finish with "Launch VanillaAgent". Adds Start Menu and desktop shortcuts, an optional PATH entry and an entry in *Add or remove programs*. |
+| 🐧 **Debian / Ubuntu / Mint** | `vanilla-agent_0.2.1_amd64.deb` · `vanilla-agent_0.2.1_arm64.deb` | Installs to `/opt/vanilla-agent`, provides `/usr/bin/vanilla*`, a desktop entry, a 512×512 icon and an optional `systemd --user` service. |
+| 🎩 **Fedora / RHEL / openSUSE** | `vanilla-agent-0.2.1-1.x86_64.rpm` · `vanilla-agent-0.2.1-1.aarch64.rpm` | Same layout as the `.deb`, with `%post` / `%preun` scriptlets and a weak `nodejs >= 20` recommendation. |
+| 🌍 **macOS + Linux** | `VanillaAgent-0.2.1-unix-installer.sh` | One self-extracting shell installer with a branded terminal UI: platform detection, install location, symlinks, desktop entry, dependency bootstrap and `--uninstall`. |
+
+Every installer:
+* installs the compiled runtime, the Web GUI control panel (`http://localhost:3000`) and the creator CLI;
+* detects **Node.js 20+** (and tells you how to install it when missing);
+* resolves runtime dependencies during setup — or on first launch if you are offline;
+* ships an uninstaller (Start Menu / `apt remove` / `dnf remove` / `lib/uninstall.sh`);
+* is verified by SHA-256 in `releases/SHA256SUMS.txt` and described in `releases/installers-manifest.json`.
+
+### Build the installers yourself
+
+```bash
+pnpm installers          # brand assets -> payload -> pkg/exe/deb/rpm/unix installer
+pnpm installers:verify   # structural verification of every artifact
+```
+
+The pipeline lives in [`scripts/installers/`](scripts/installers/README.md). Targets are
+skipped (with a note) when their toolchain is unavailable: `makensis` for Windows,
+`dpkg-deb` for Debian packages, `python3` for RPMs.
+
+---
+
+## 📦 Portable Release Matrix
+
+Pre-packaged archives are also ready for zero-install deployment:
 
 | Operating System | Architecture | Package File | Launcher | SHA-256 Verified |
 |---|---|---|---|:---:|
@@ -225,7 +312,7 @@ Pre-packaged distributions are ready for one-click deployment:
 | **Linux** | **Linux x86_64** | `releases/vanilla-agent-v0.2.1-linux-x64.tar.gz` | `./vanilla-gui` | ✅ |
 | **Linux** | **Linux ARM64** | `releases/vanilla-agent-v0.2.1-linux-arm64.tar.gz` | `./vanilla-gui` | ✅ |
 
-To build standalone release packages yourself:
+To build portable archives yourself:
 ```bash
 pnpm release
 ```

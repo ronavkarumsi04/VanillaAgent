@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=VanillaAgent
+GenericName=Sovereign AI Agent Runtime
+Comment=Sovereign Autonomous AI Agent Runtime & Swarm Engine
+Exec=vanilla-gui
+TryExec=vanilla-gui
+Icon=vanillaagent
+Terminal=true
+Categories=Development;Utility;System;Science;
+Keywords=AI;agent;autonomous;sovereign;swarm;wallet;ollama;
+StartupNotify=true
+StartupWMClass=vanilla-agent
