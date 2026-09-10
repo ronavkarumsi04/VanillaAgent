@@ -1,0 +1,28 @@
+{
+  "name": "@vanilla-agent/cli",
+  "version": "0.2.1",
+  "description": "VanillaAgent - Creator & Developer CLI Management Suite",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "vanilla-cli": "dist/index.js",
+    "vanilla-agent-cli": "dist/index.js",
+    "automaton-cli": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@vanilla-agent/core": "workspace:*",
+    "chalk": "^5.3.0",
+    "viem": "^2.44.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

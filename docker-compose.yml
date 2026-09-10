@@ -1,0 +1,35 @@
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vanilla-agent
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - INFERENCE_MODEL=${INFERENCE_MODEL:-claude-3-7-sonnet-latest}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - XAI_API_KEY=${XAI_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - METRICS_PORT=3000
+    volumes:
+      - agent-data:/app/data
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: vanilla-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-models:/root/.ollama
+    ports:
+      - "11434:11434"
+
+volumes:
+  agent-data:
+  ollama-models:
